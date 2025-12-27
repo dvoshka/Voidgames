@@ -3,44 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOIDGAMES - Safe Edition</title>
+    <title>VOIDGAMES - Платформа</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #050505; --accent: #00FF99; --card: #111; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 20px; text-align: center; border-bottom: 2px solid var(--accent); background: #000; }
-        .logo { font-family: 'Orbitron', sans-serif; color: var(--accent); font-size: 1.8rem; text-shadow: 0 0 10px var(--accent); }
+        header { padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); background: #000; box-shadow: 0 0 15px rgba(0,255,153,0.2); }
+        .logo { font-family: 'Orbitron', sans-serif; color: var(--accent); font-size: 1.5rem; text-shadow: 0 0 10px var(--accent); }
         
         nav { display: flex; background: #111; border-bottom: 1px solid #333; }
-        .nav-btn { flex: 1; padding: 15px; background: none; border: none; color: #666; font-family: 'Orbitron', sans-serif; cursor: pointer; font-size: 0.7rem; }
+        .nav-btn { flex: 1; padding: 12px; background: none; border: none; color: #666; font-family: 'Orbitron', sans-serif; cursor: pointer; font-size: 0.65rem; transition: 0.3s; }
         .nav-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); background: rgba(0,255,153,0.05); }
 
-        .tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
+        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; }
         .tab-content.active { display: block; }
 
-        /* Сетка игр */
-        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .game-card { 
-            background: var(--card); border: 2px solid var(--accent); border-radius: 15px; 
+            background: var(--card); border: 1px solid var(--accent); border-radius: 12px; 
             aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; padding: 10px; transition: 0.3s;
+            justify-content: center; text-align: center; padding: 10px; cursor: pointer;
         }
-        .game-card:active { transform: scale(0.95); background: #1a1a1a; }
-        .game-icon { font-size: 2.5rem; margin-bottom: 10px; }
-        .game-name { font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
 
-        /* Формы */
-        .form-box { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--accent); margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 8px 0; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 8px; outline: none; }
-        input:focus { border-color: var(--accent); }
-        .btn { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        /* Плеер игры */
+        .form-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
+        .instr-step { font-size: 0.8rem; margin-bottom: 8px; color: #ccc; }
+        .instr-step b { color: var(--accent); }
+
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; outline: none; }
+        textarea { height: 120px; font-family: monospace; border-color: var(--accent); color: var(--accent); }
+        .btn { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; }
         #gameFrame { width: 100%; height: 100%; border: none; }
-        .close-btn { position: absolute; top: 15px; right: 15px; width: 40px; height: 40px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; z-index: 1001; cursor: pointer; box-shadow: 0 0 15px var(--accent); }
+        .close-btn { position: absolute; top: 10px; right: 10px; width: 35px; height: 35px; background: var(--accent); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; z-index: 1001; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -49,26 +46,32 @@
 
 <nav>
     <button class="nav-btn active" onclick="switchTab('games', this)">ИГРЫ</button>
-    <button class="nav-btn" onclick="switchTab('add', this)">ДОБАВИТЬ</button>
+    <button class="nav-btn" onclick="switchTab('add', this)">СОЗДАТЬ</button>
     <button class="nav-btn" onclick="switchTab('profile', this)">ПРОФИЛЬ</button>
 </nav>
 
 <div id="games" class="tab-content active">
-    <div class="game-grid" id="gameList">
-        </div>
+    <div class="game-grid" id="gameList"></div>
 </div>
 
 <div id="add" class="tab-content">
+    <div class="form-box">
+        <h3 style="color: var(--accent); margin-bottom: 10px;">ИНСТРУКЦИЯ</h3>
+        <div class="instr-step">1. Напиши код игры (HTML/CSS/JS).</div>
+        <div class="instr-step">2. Скопируй <b>весь текст</b> кода.</div>
+        <div class="instr-step">3. Вставь его в поле ниже и нажми <b>Опубликовать</b>.</div>
+        <div class="instr-step" style="font-size: 0.7rem; opacity: 0.6;">* Игра появится в списке мгновенно!</div>
+    </div>
+
     <div id="uploadForm" style="display:none;">
         <div class="form-box">
-            <h3>Опубликовать игру</h3>
             <input type="text" id="gName" placeholder="Название игры">
-            <input type="text" id="gUrl" placeholder="Ссылка (https://...)">
-            <input type="text" id="gIcon" placeholder="Иконка-эмодзи (напр. 🎮)">
-            <button class="btn" onclick="publishGame()">ЗАПУСТИТЬ В ПУСТОТУ</button>
+            <input type="text" id="gIcon" placeholder="Иконка (напр. 🕹️)">
+            <textarea id="gCode" placeholder="Вставь сюда код: <html>...</html>"></textarea>
+            <button class="btn" onclick="publishGame()">ОПУБЛИКОВАТЬ В ПУСТОТУ</button>
         </div>
     </div>
-    <div id="addAuthWarning" class="form-box">Войдите в профиль, чтобы выкладывать игры.</div>
+    <div id="addWarn" class="form-box" style="text-align:center;">Войдите, чтобы создавать игры.</div>
 </div>
 
 <div id="profile" class="tab-content">
@@ -78,8 +81,8 @@
         <button class="btn" onclick="authAction()">ВХОД / РЕГИСТРАЦИЯ</button>
     </div>
     <div id="userInfo" style="display:none; text-align: center;" class="form-box">
-        <div style="font-size: 4rem;">👤</div>
-        <h3 id="userMail" style="color: var(--accent); margin-bottom: 15px;"></h3>
+        <div style="font-size: 3rem;">👤</div>
+        <h3 id="userMail" style="color: var(--accent); margin: 10px 0;"></h3>
         <button class="btn" style="background: #ff4444;" onclick="logout()">ВЫЙТИ</button>
     </div>
 </div>
@@ -107,7 +110,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Навигация
     window.switchTab = (id, btn) => {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -115,11 +117,9 @@
         btn.classList.add('active');
     };
 
-    // Авторизация
     window.authAction = () => {
-        const mail = document.getElementById('email').value;
-        const psw = document.getElementById('pass').value;
-        signInWithEmailAndPassword(auth, mail, psw).catch(() => createUserWithEmailAndPassword(auth, mail, psw)).catch(e => alert("Ошибка!"));
+        const m = document.getElementById('email').value, p = document.getElementById('pass').value;
+        signInWithEmailAndPassword(auth, m, p).catch(() => createUserWithEmailAndPassword(auth, m, p)).catch(() => alert("Ошибка!"));
     };
     window.logout = () => signOut(auth);
 
@@ -127,28 +127,22 @@
         document.getElementById('loginForm').style.display = user ? 'none' : 'block';
         document.getElementById('userInfo').style.display = user ? 'block' : 'none';
         document.getElementById('uploadForm').style.display = user ? 'block' : 'none';
-        document.getElementById('addAuthWarning').style.display = user ? 'none' : 'block';
+        document.getElementById('addWarn').style.display = user ? 'none' : 'block';
         if(user) document.getElementById('userMail').innerText = user.email;
     });
 
-    // Публикация
     window.publishGame = async () => {
         const name = document.getElementById('gName').value;
-        const url = document.getElementById('gUrl').value;
-        const icon = document.getElementById('gIcon').value || "🎮";
-
-        if(!name || !url.startsWith('https://')) return alert("Нужна HTTPS ссылка!");
-
-        await addDoc(collection(db, "user_games"), {
-            name, url, icon, author: auth.currentUser.email, createdAt: Date.now()
-        });
-        alert("Опубликовано!");
+        const code = document.getElementById('gCode').value;
+        const icon = document.getElementById('gIcon').value || "👾";
+        if(!name || !code) return alert("Заполни все поля!");
+        await addDoc(collection(db, "user_games"), { name, code, icon, author: auth.currentUser.email, createdAt: Date.now() });
+        alert("Игра в Пустоте!");
+        document.getElementById('gName').value = ""; document.getElementById('gCode').value = "";
         switchTab('games', document.querySelectorAll('.nav-btn')[0]);
     };
 
-    // Загрузка списка игр
-    const q = query(collection(db, "user_games"), orderBy("createdAt", "desc"));
-    onSnapshot(q, snap => {
+    onSnapshot(query(collection(db, "user_games"), orderBy("createdAt", "desc")), snap => {
         const list = document.getElementById('gameList');
         list.innerHTML = '';
         snap.forEach(doc => {
@@ -156,7 +150,8 @@
             const card = document.createElement('div');
             card.className = 'game-card';
             card.onclick = () => {
-                document.getElementById('gameFrame').src = g.url;
+                const f = document.getElementById('gameFrame');
+                f.srcdoc = g.code;
                 document.getElementById('overlay').style.display = 'block';
             };
             card.innerHTML = `<div class="game-icon">${g.icon}</div><div class="game-name">${g.name}</div>`;
@@ -166,7 +161,7 @@
 
     window.closeGame = () => {
         document.getElementById('overlay').style.display = 'none';
-        document.getElementById('gameFrame').src = '';
+        document.getElementById('gameFrame').srcdoc = '';
     };
 </script>
 </body>
