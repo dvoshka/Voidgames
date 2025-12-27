@@ -3,140 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOIDGAMES - Мобильный портал</title>
+    <title>VOIDGAMES</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@500;700&display=swap');
 
         :root {
-            --dark-bg: #0a0a0a;
-            --accent-color: #00FF99;
-            --text-color: #f0f0f0;
-            --card-bg: #1a1a1a;
+            --bg: #050505;
+            --card: #121212;
+            --accent: #00FF99;
+            --text: #ffffff;
         }
 
         * {
-            box-sizing: border-box; /* Чтобы отступы не распирали блоки */
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--text-color);
+            background-color: var(--bg);
+            color: var(--text);
             font-family: 'Montserrat', sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden; /* Защита от горизонтальной прокрутки */
+            padding-bottom: 50px;
         }
 
-        /* Шапка сайта */
+        /* Шапка в стиле минимализма */
         header {
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px 5%;
-            border-bottom: 2px solid var(--accent-color);
+            padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            background: #000;
+            border-bottom: 1px solid #222;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem; /* Оптимально для мобильных */
-            color: var(--accent-color);
-            text-shadow: 0 0 10px var(--accent-color);
-            text-decoration: none;
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .logo span { color: #fff; }
-
-        /* Контейнер для карточек */
         .container {
-            padding: 20px;
+            padding: 15px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        h2 {
-            text-align: center;
-            margin: 20px 0;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: var(--accent-color);
+        .section-title {
+            font-size: 1rem;
+            margin: 15px 0;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* Адаптивная сетка */
+        /* Сетка как в Яндекс Играх (2 колонки на мобилках, много на ПК) */
         .game-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr); /* 2 колонки на мобильном */
+            gap: 12px;
         }
 
-        /* Если экран совсем маленький (как у многих телефонов) */
-        @media (max-width: 350px) {
-            .game-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (min-width: 600px) {
+            .game-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 900px) {
+            .game-grid { grid-template-columns: repeat(5, 1fr); }
+        }
+        @media (min-width: 1200px) {
+            .game-grid { grid-template-columns: repeat(6, 1fr); }
         }
 
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden; /* Чтобы картинка не вылезала за углы */
-            border: 1px solid #333;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .game-card:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 15px rgba(0, 255, 153, 0.2);
-        }
-
-        .game-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .card-content h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .card-content p {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 15px;
-            flex-grow: 1;
-        }
-
-        .play-btn {
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
+        /* Карточка-плитка */
+        .game-item {
+            background: var(--card);
+            border-radius: 16px;
+            aspect-ratio: 1 / 1; /* Делает карточку идеально квадратной */
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
+            border: 1px solid #222;
+            transition: transform 0.2s, border-color 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Модальное окно (полноэкранное на мобилках) */
-        .modal {
+        .game-item:active {
+            transform: scale(0.95);
+        }
+
+        .game-item:hover {
+            border-color: var(--accent);
+        }
+
+        /* Иконка игры */
+        .game-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(0,255,153,0.3));
+        }
+
+        /* Название игры на плашке снизу */
+        .game-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 5px;
+            background: rgba(0,0,0,0.8);
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Модалка для игры */
+        .game-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -144,22 +136,24 @@
             width: 100%;
             height: 100%;
             background: #000;
-            z-index: 200;
+            z-index: 2000;
             flex-direction: column;
         }
 
-        .modal-header {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111;
-        }
-
         .close-btn {
-            color: var(--accent-color);
-            font-size: 2rem;
-            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--accent);
+            z-index: 2001;
         }
 
         iframe {
@@ -172,51 +166,69 @@
 <body>
 
 <header>
-    <a href="#" class="logo">VOID<span>GAMES</span></a>
+    <div class="logo">VOIDGAMES</div>
 </header>
 
 <div class="container">
-    <h2>ПОПУЛЯРНЫЕ ИГРЫ</h2>
+    <div class="section-title">Популярное</div>
     
     <div class="game-grid">
-        <div class="game-card">
-            <img src="https://img.freepik.com/free-vector/retro-game-background-with-joystick_23-2148232414.jpg" alt="Clicker">
-            <div class="card-content">
-                <h3>Золотой Кликер</h3>
-                <p>Нажимай на кнопку и собирай монеты. Стань самым богатым в пустоте!</p>
-                <button class="play-btn" onclick="openGame('games/clicker-hero.html')">Играть</button>
-            </div>
+        <div class="game-item" onclick="openGame('Золотой Кликер', 'games/clicker-hero.html')">
+            <div class="game-icon">💰</div>
+            <div class="game-name">Кликер</div>
         </div>
 
-        <div class="game-card">
-            <img src="https://img.freepik.com/free-vector/space-game-background-with-starship_23-2148201289.jpg" alt="Space">
-            <div class="card-content">
-                <h3>Космо-Битва</h3>
-                <p>Защищай свою базу от астероидов. Уворачивайся и стреляй!</p>
-                <button class="play-btn" onclick="openGame('games/space-shooter.html')">Скоро</button>
-            </div>
+        <div class="game-item">
+            <div class="game-icon">🚀</div>
+            <div class="game-name">Space Sim</div>
+        </div>
+
+        <div class="game-item">
+            <div class="game-icon">🐍</div>
+            <div class="game-name">Змейка</div>
+        </div>
+
+        <div class="game-item">
+            <div class="game-icon">🧩</div>
+            <div class="game-name">Пазлы</div>
+        </div>
+
+        <div class="game-item">
+            <div class="game-icon">⚔️</div>
+            <div class="game-name">РПГ</div>
+        </div>
+
+        <div class="game-item">
+            <div class="game-icon">🏎️</div>
+            <div class="game-name">Гонки</div>
         </div>
     </div>
 </div>
 
-<div id="gameModal" class="modal">
-    <div class="modal-header">
-        <span id="gameTitle" style="font-family: 'Orbitron'; color: #0f9;">ИГРА</span>
-        <span class="close-btn" onclick="closeGame()">&times;</span>
-    </div>
+<div id="gameOverlay" class="game-overlay">
+    <div class="close-btn" onclick="closeGame()">&times;</div>
     <iframe id="gameFrame" src=""></iframe>
 </div>
 
 <script>
-    function openGame(url) {
-        document.getElementById('gameFrame').src = url;
-        document.getElementById('gameModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Запрещаем прокрутку сайта под игрой
+    function openGame(name, url) {
+        const frame = document.getElementById('gameFrame');
+        const overlay = document.getElementById('gameOverlay');
+        
+        // Показываем оверлей и загружаем игру
+        frame.src = url;
+        overlay.style.display = 'flex';
+        
+        // Блокируем скролл основной страницы
+        document.body.style.overflow = 'hidden';
     }
 
     function closeGame() {
-        document.getElementById('gameModal').style.display = 'none';
-        document.getElementById('gameFrame').src = '';
+        const frame = document.getElementById('gameFrame');
+        const overlay = document.getElementById('gameOverlay');
+        
+        overlay.style.display = 'none';
+        frame.src = '';
         document.body.style.overflow = 'auto';
     }
 </script>
