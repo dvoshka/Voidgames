@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOIDGAMES - Твой игровой портал</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@400;600&display=swap');
+
+        :root {
+            --dark-bg: #111;
+            --accent-color: #00FF99; /* Яркий акцент - неоновый зеленый */
+            --text-color: #E0E0E0;
+            --card-bg: #222;
+            --card-border: #00B377;
+            --hover-shadow: 0 0 20px var(--accent-color);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Анимация фона (опционально, для крутости) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(0,255,153,0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 90%, rgba(0,255,153,0.1) 0%, transparent 20%);
+            z-index: -1;
+            animation: moveBackground 20s infinite alternate linear;
+        }
+
+        @keyframes moveBackground {
+            from { background-position: 0% 0%, 100% 100%; }
+            to { background-position: 100% 100%, 0% 0%; }
+        }
+
+        /* Хедер - верхняя панель */
+        header {
+            background-color: rgba(0,0,0,0.6);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0,255,153,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem; /* Увеличен размер */
+            font-weight: 700;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-color);
+            letter-spacing: 2px;
+            position: relative;
+            animation: pulseLogo 3s infinite alternate;
+        }
+        
+        @keyframes pulseLogo {
+            from { text-shadow: 0 0 5px var(--accent-color); }
+            to { text-shadow: 0 0 20px var(--accent-color); }
+        }
+
+        .logo span {
+            color: var(--text-color); /* Часть слова белая */
+        }
+
+        /* Навигация (можно добавить позже) */
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 600;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        nav a:hover {
+            color: var(--accent-color);
+            text-shadow: 0 0 8px var(--accent-color);
+        }
+
+        /* Главный контент */
+        main {
+            flex-grow: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            text-align: center;
+            margin-bottom: 50px;
+            text-shadow: 0 0 15px rgba(0,255,153,0.5);
+        }
+
+        /* Сетка для игр */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .game-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--accent-color);
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 180px; /* Фиксированная высота для картинок */
+            object-fit: cover; /* Обрезка, чтобы заполнить */
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0,255,153,0.3);
+            transition: transform 0.3s;
+        }
+        .game-card:hover img {
+            transform: scale(1.02);
+        }
+
+        .game-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            font-size: 0.9rem;
+            color: #B0B0B0;
+            line-height: 1.4;
+            flex-grow: 1; /* Чтобы текст занимал всё доступное место */
+            margin-bottom: 20px;
+        }
+
+        .game-card button {
+            background-color: var(--accent-color);
+            color: var(--dark-bg);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0,255,153,0.4);
+        }
+
+        .game-card button:hover {
+            background-color: #00E68C;
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(0,255,153,0.8);
+        }
+
+        /* Футер - нижняя часть сайта */
+        footer {
+            background-color: rgba(0,0,0,0.6);
+            color: #999;
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid var(--accent-color);
+            margin-top: 50px;
+        }
+
+        /* Модальное окно для игры */
+        .modal {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed; /* Поверх всего */
+            z-index: 1001; /* Выше всего остального */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Если контент большой */
+            background-color: rgba(0,0,0,0.8); /* Полупрозрачный черный фон */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--dark-bg);
+            margin: auto;
+            padding: 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+            height: 90%;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+        }
+
+        .close-button {
+            color: var(--accent-color);
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: white;
+            text-decoration: none;
+        }
+
+        .game-iframe {
+            width: 100%;
+            flex-grow: 1; /* Чтобы iframe занимал всё доступное место */
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            background-color: black;
+        }
+
+        /* Медиа-запросы для адаптивности */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 10px 20px;
+            }
+            .logo {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+            nav {
+                width: 100%;
+                display: flex;
+                justify-content: space-around;
+            }
+            nav a {
+                margin: 0 10px;
+            }
+            h2 {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+            .game-card {
+                padding: 15px;
+            }
+            .game-card h3 {
+                font-size: 1.3rem;
+            }
+            .game-card button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">VOID<span>GAMES</span></div>
+        <nav>
+            <a href="#games">Игры</a>
+            <a href="#about">О нас</a>
+            <a href="#contact">Контакты</a>
+        </nav>
+    </header>
+    
+    <main>
+        <h2 id="games">Наша коллекция игр</h2>
+        
+        <div class="game-grid">
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x180/00E68C/111?text=SPACE+SHOOTER" alt="Space Shooter">
+                <h3>Космический шутер</h3>
+                <p>Классический аркадный шутер! Уклоняйтесь от астероидов, уничтожайте врагов и победите босса!</p>
+                <button onclick="openGameModal('Космический шутер', 'games/space-shooter.html')">Играть</button>
+            </div>
+
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x180/00B377/111?text=CLICKER+HERO" alt="Clicker Hero">
+                <h3>Герой-кликер</h3>
+                <p>Нажимайте как можно быстрее, чтобы победить монстров и улучшить своего героя! Бесконечная прокачка.</p>
+                <button onclick="openGameModal('Герой-кликер', 'games/clicker-hero.html')">Играть</button>
+            </div>
+
+            <div class="game-card">
+                <img src="https://via.placeholder.com/300x180/00FF99/111?text=PLATFORM+ADVENTURE" alt="Platform Adventure">
+                <h3>Платформенное приключение</h3>
+                <p>Исследуйте таинственные уровни, собирайте монеты и преодолевайте ловушки в этом захватывающем платформере.</p>
+                <button onclick="openGameModal('Платформенное приключение', 'games/platform-adventure.html')">Играть</button>
+            </div>
+
+            </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 VOIDGAMES. Все права защищены.</p>
+    </footer>
+
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalGameTitle"></h3>
+                <span class="close-button" onclick="closeGameModal()">&times;</span>
+            </div>
+            <iframe id="gameIframe" class="game-iframe" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Функция для открытия модального окна с игрой
+        function openGameModal(gameTitle, gameUrl) {
+            document.getElementById('modalGameTitle').innerText = gameTitle;
+            document.getElementById('gameIframe').src = gameUrl;
+            document.getElementById('gameModal').style.display = 'flex'; // Показываем модальное окно
+        }
+
+        // Функция для закрытия модального окна
+        function closeGameModal() {
+            document.getElementById('gameModal').style.display = 'none'; // Скрываем модальное окно
+            document.getElementById('gameIframe').src = ''; // Останавливаем игру, очищая src
+        }
+
+        // Закрытие модального окна при клике вне его (опционально)
+        window.onclick = function(event) {
+            const modal = document.getElementById('gameModal');
+            if (event.target == modal) {
+                closeGameModal();
+            }
+        }
+    </script>
+</body>
+</html>
