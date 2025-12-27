@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VOIDGAMES - Платформа</title>
+    <title>VOIDGAMES - Google Protected</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #050505; --accent: #00FF99; --card: #111; --text: #fff; }
+        :root { --bg: #050505; --accent: #00FF99; --card: #111; --text: #fff; --admin: #ffcc00; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; }
         body { background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        header { padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); background: #000; box-shadow: 0 0 15px rgba(0,255,153,0.2); }
+        header { padding: 15px; text-align: center; border-bottom: 2px solid var(--accent); background: #000; }
         .logo { font-family: 'Orbitron', sans-serif; color: var(--accent); font-size: 1.5rem; text-shadow: 0 0 10px var(--accent); }
         
         nav { display: flex; background: #111; border-bottom: 1px solid #333; }
@@ -23,17 +23,17 @@
         .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .game-card { 
             background: var(--card); border: 1px solid var(--accent); border-radius: 12px; 
-            aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; text-align: center; padding: 10px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 15px; cursor: pointer; position: relative; text-align: center;
         }
 
         .form-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333; margin-bottom: 15px; }
-        .instr-step { font-size: 0.8rem; margin-bottom: 8px; color: #ccc; }
-        .instr-step b { color: var(--accent); }
-
         input, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; outline: none; }
         textarea { height: 120px; font-family: monospace; border-color: var(--accent); color: var(--accent); }
+        
         .btn { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .moderate-btns { display: flex; gap: 5px; width: 100%; margin-top: 10px; }
+        .m-btn { flex: 1; font-size: 0.6rem; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; }
         #gameFrame { width: 100%; height: 100%; border: none; }
@@ -46,6 +46,7 @@
 
 <nav>
     <button class="nav-btn active" onclick="switchTab('games', this)">ИГРЫ</button>
+    <button class="nav-btn" id="modTabBtn" style="display:none; color: var(--admin);" onclick="switchTab('moderation', this)">МОДЕРАЦИЯ</button>
     <button class="nav-btn" onclick="switchTab('add', this)">СОЗДАТЬ</button>
     <button class="nav-btn" onclick="switchTab('profile', this)">ПРОФИЛЬ</button>
 </nav>
@@ -54,36 +55,39 @@
     <div class="game-grid" id="gameList"></div>
 </div>
 
-<div id="add" class="tab-content">
-    <div class="form-box">
-        <h3 style="color: var(--accent); margin-bottom: 10px;">ИНСТРУКЦИЯ</h3>
-        <div class="instr-step">1. Напиши код игры (HTML/CSS/JS).</div>
-        <div class="instr-step">2. Скопируй <b>весь текст</b> кода.</div>
-        <div class="instr-step">3. Вставь его в поле ниже и нажми <b>Опубликовать</b>.</div>
-        <div class="instr-step" style="font-size: 0.7rem; opacity: 0.6;">* Игра появится в списке мгновенно!</div>
-    </div>
+<div id="moderation" class="tab-content">
+    <h3 style="color: var(--admin); margin-bottom: 15px; font-family: 'Orbitron';">ОЧЕРЕДЬ ПРОВЕРКИ</h3>
+    <div class="game-grid" id="modList"></div>
+</div>
 
+<div id="add" class="tab-content">
     <div id="uploadForm" style="display:none;">
         <div class="form-box">
+            <h3 style="color: var(--accent); margin-bottom: 10px;">НОВАЯ ИГРА</h3>
             <input type="text" id="gName" placeholder="Название игры">
             <input type="text" id="gIcon" placeholder="Иконка (напр. 🕹️)">
-            <textarea id="gCode" placeholder="Вставь сюда код: <html>...</html>"></textarea>
-            <button class="btn" onclick="publishGame()">ОПУБЛИКОВАТЬ В ПУСТОТУ</button>
+            <textarea id="gCode" placeholder="Вставь сюда HTML/CSS/JS код игры"></textarea>
+            <button class="btn" onclick="publishGame()">ОТПРАВИТЬ НА ПРОВЕРКУ</button>
         </div>
     </div>
-    <div id="addWarn" class="form-box" style="text-align:center;">Войдите, чтобы создавать игры.</div>
+    <div id="addWarn" class="form-box" style="text-align: center;">
+        Войдите через Google в профиле, чтобы создавать игры.
+    </div>
 </div>
 
 <div id="profile" class="tab-content">
-    <div id="loginForm" class="form-box">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="pass" placeholder="Пароль">
-        <button class="btn" onclick="authAction()">ВХОД / РЕГИСТРАЦИЯ</button>
-    </div>
-    <div id="userInfo" style="display:none; text-align: center;" class="form-box">
-        <div style="font-size: 3rem;">👤</div>
-        <h3 id="userMail" style="color: var(--accent); margin: 10px 0;"></h3>
-        <button class="btn" style="background: #ff4444;" onclick="logout()">ВЫЙТИ</button>
+    <div id="authSection" class="form-box" style="text-align: center;">
+        <div id="loggedOutUI">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+            <p style="margin-bottom: 15px; opacity: 0.7;">Вход доступен только через проверенные аккаунты Google.</p>
+            <button class="btn" onclick="signInWithGoogle()">ВОЙТИ ЧЕРЕЗ GOOGLE</button>
+        </div>
+        <div id="loggedInUI" style="display:none;">
+            <div style="font-size: 3rem;">👤</div>
+            <h3 id="userMail" style="color: var(--accent); margin: 10px 0;"></h3>
+            <p style="font-size: 0.7rem; color: #666; margin-bottom: 20px;">Аккаунт подтвержден</p>
+            <button class="btn" style="background: #ff4444;" onclick="logout()">ВЫЙТИ</button>
+        </div>
     </div>
 </div>
 
@@ -94,8 +98,8 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAUFxWnq4pimOxHQiuVkLVx5nW1yiWUlrE",
@@ -106,10 +110,15 @@
         appId: "1:318175635640:web:9fc58a7813cab91b35ec4d"
     };
 
+    // --- НАСТРОЙКА АДМИНА ---
+    const ADMIN_EMAIL = "dvoshka.github.io@gmail.com"; //thevoidlorddevelor@gmail.com
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
+    // Навигация
     window.switchTab = (id, btn) => {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -117,52 +126,78 @@
         btn.classList.add('active');
     };
 
-    window.authAction = () => {
-        const m = document.getElementById('email').value, p = document.getElementById('pass').value;
-        signInWithEmailAndPassword(auth, m, p).catch(() => createUserWithEmailAndPassword(auth, m, p)).catch(() => alert("Ошибка!"));
+    // Авторизация Google
+    window.signInWithGoogle = () => {
+        signInWithPopup(auth, provider).catch(err => alert("Ошибка! Проверь настройки домена в Firebase."));
     };
     window.logout = () => signOut(auth);
 
     onAuthStateChanged(auth, user => {
-        document.getElementById('loginForm').style.display = user ? 'none' : 'block';
-        document.getElementById('userInfo').style.display = user ? 'block' : 'none';
+        const isAdmin = user && user.email === ADMIN_EMAIL;
+        document.getElementById('loggedOutUI').style.display = user ? 'none' : 'block';
+        document.getElementById('loggedInUI').style.display = user ? 'block' : 'none';
         document.getElementById('uploadForm').style.display = user ? 'block' : 'none';
         document.getElementById('addWarn').style.display = user ? 'none' : 'block';
+        document.getElementById('modTabBtn').style.display = isAdmin ? 'block' : 'none';
         if(user) document.getElementById('userMail').innerText = user.email;
     });
 
+    // Публикация
     window.publishGame = async () => {
-        const name = document.getElementById('gName').value;
+        const name = document.getElementById('gName').value.trim();
         const code = document.getElementById('gCode').value;
         const icon = document.getElementById('gIcon').value || "👾";
-        if(!name || !code) return alert("Заполни все поля!");
-        await addDoc(collection(db, "user_games"), { name, code, icon, author: auth.currentUser.email, createdAt: Date.now() });
-        alert("Игра в Пустоте!");
+        
+        if(name.length < 2 || code.length < 20) return alert("Слишком короткий код или название!");
+
+        await addDoc(collection(db, "user_games"), { 
+            name, code, icon, 
+            author: auth.currentUser.email, 
+            approved: false, 
+            createdAt: Date.now() 
+        });
+        alert("Отправлено на модерацию!");
         document.getElementById('gName').value = ""; document.getElementById('gCode').value = "";
-        switchTab('games', document.querySelectorAll('.nav-btn')[0]);
     };
 
+    // Обработка списков игр
     onSnapshot(query(collection(db, "user_games"), orderBy("createdAt", "desc")), snap => {
         const list = document.getElementById('gameList');
-        list.innerHTML = '';
-        snap.forEach(doc => {
-            const g = doc.data();
+        const modList = document.getElementById('modList');
+        list.innerHTML = ''; modList.innerHTML = '';
+
+        snap.forEach(docSnap => {
+            const g = docSnap.data();
+            const id = docSnap.id;
+            
             const card = document.createElement('div');
             card.className = 'game-card';
+            card.innerHTML = `<div style="font-size:2.5rem">${g.icon}</div><div style="font-weight:bold">${g.name}</div>`;
             card.onclick = () => {
-                const f = document.getElementById('gameFrame');
-                f.srcdoc = g.code;
+                document.getElementById('gameFrame').srcdoc = g.code;
                 document.getElementById('overlay').style.display = 'block';
             };
-            card.innerHTML = `<div class="game-icon">${g.icon}</div><div class="game-name">${g.name}</div>`;
-            list.appendChild(card);
+
+            if (g.approved) {
+                list.appendChild(card);
+            } else if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
+                const adminCard = card.cloneNode(true);
+                adminCard.onclick = card.onclick;
+                const btns = document.createElement('div');
+                btns.className = 'moderate-btns';
+                btns.innerHTML = `
+                    <button class="m-btn" style="background:var(--accent)" onclick="event.stopPropagation(); window.approveGame('${id}')">ОДОБРИТЬ</button>
+                    <button class="m-btn" style="background:#ff4444" onclick="event.stopPropagation(); window.deleteGame('${id}')">УДАЛИТЬ</button>
+                `;
+                adminCard.appendChild(btns);
+                modList.appendChild(adminCard);
+            }
         });
     });
 
-    window.closeGame = () => {
-        document.getElementById('overlay').style.display = 'none';
-        document.getElementById('gameFrame').srcdoc = '';
-    };
+    window.approveGame = async (id) => { await updateDoc(doc(db, "user_games", id), { approved: true }); };
+    window.deleteGame = async (id) => { if(confirm("Удалить игру?")) await deleteDoc(doc(db, "user_games", id)); };
+    window.closeGame = () => { document.getElementById('overlay').style.display = 'none'; document.getElementById('gameFrame').srcdoc = ''; };
 </script>
 </body>
 </html>
