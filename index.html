@@ -34,6 +34,9 @@
         .btn { width: 100%; padding: 12px; background: var(--accent); color: #000; border: none; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .moderate-btns { display: flex; gap: 5px; width: 100%; margin-top: 10px; }
         .m-btn { flex: 1; font-size: 0.6rem; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        
+        /* Стиль для кнопки удаления в общем списке */
+        .admin-del-btn { background: #ff4444; color: white; width: 90%; margin-top: 8px; font-size: 0.6rem; padding: 5px; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; }
 
         #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; }
         #gameFrame { width: 100%; height: 100%; border: none; }
@@ -113,13 +116,11 @@
     // --- НАСТРОЙКА АДМИНА ---
     const ADMIN_EMAIL = "thevoidlorddevelor@gmail.com";
 
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // Навигация
     window.switchTab = (id, btn) => {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -127,9 +128,8 @@
         btn.classList.add('active');
     };
 
-    // Авторизация Google
     window.signInWithGoogle = () => {
-        signInWithPopup(auth, provider).catch(err => alert("Ошибка! Проверь настройки домена в Firebase."));
+        signInWithPopup(auth, provider).catch(err => alert("Ошибка! Проверь настройки в Firebase."));
     };
     window.logout = () => signOut(auth);
 
@@ -143,7 +143,6 @@
         if(user) document.getElementById('userMail').innerText = user.email;
     });
 
-    // Публикация
     window.publishGame = async () => {
         const name = document.getElementById('gName').value.trim();
         const code = document.getElementById('gCode').value;
@@ -161,7 +160,6 @@
         document.getElementById('gName').value = ""; document.getElementById('gCode').value = "";
     };
 
-    // Обработка списков игр
     onSnapshot(query(collection(db, "user_games"), orderBy("createdAt", "desc")), snap => {
         const list = document.getElementById('gameList');
         const modList = document.getElementById('modList');
@@ -170,18 +168,31 @@
         snap.forEach(docSnap => {
             const g = docSnap.data();
             const id = docSnap.id;
+            const isAdmin = auth.currentUser && auth.currentUser.email === ADMIN_EMAIL;
             
             const card = document.createElement('div');
             card.className = 'game-card';
             card.innerHTML = `<div style="font-size:2.5rem">${g.icon}</div><div style="font-weight:bold">${g.name}</div>`;
+            
             card.onclick = () => {
                 document.getElementById('gameFrame').srcdoc = g.code;
                 document.getElementById('overlay').style.display = 'block';
             };
 
             if (g.approved) {
+                // Если ты админ, добавляем кнопку удаления ПРЯМО В КАРТОЧКУ
+                if (isAdmin) {
+                    const dBtn = document.createElement('button');
+                    dBtn.className = 'admin-del-btn';
+                    dBtn.innerText = 'УДАЛИТЬ';
+                    dBtn.onclick = (e) => {
+                        e.stopPropagation(); // Чтобы игра не открылась при нажатии на "Удалить"
+                        window.deleteGame(id);
+                    };
+                    card.appendChild(dBtn);
+                }
                 list.appendChild(card);
-            } else if (auth.currentUser && auth.currentUser.email === ADMIN_EMAIL) {
+            } else if (isAdmin) {
                 const adminCard = card.cloneNode(true);
                 adminCard.onclick = card.onclick;
                 const btns = document.createElement('div');
@@ -197,7 +208,7 @@
     });
 
     window.approveGame = async (id) => { await updateDoc(doc(db, "user_games", id), { approved: true }); };
-    window.deleteGame = async (id) => { if(confirm("Удалить игру?")) await deleteDoc(doc(db, "user_games", id)); };
+    window.deleteGame = async (id) => { if(confirm("Удалить игру навсегда?")) await deleteDoc(doc(db, "user_games", id)); };
     window.closeGame = () => { document.getElementById('overlay').style.display = 'none'; document.getElementById('gameFrame').srcdoc = ''; };
 </script>
 </body>
